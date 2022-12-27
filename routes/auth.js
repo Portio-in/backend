@@ -2,6 +2,8 @@ const router = require("express").Router();
 const prisma = require("../db").getInstance();
 const config = require("../config");
 const axios = require("axios").default;
+const {OAuth2Client} = require('google-auth-library');
+
 
 // Auth redirection link
 router.get("/github", (req, res) => {
@@ -38,6 +40,22 @@ router.get("/callback/github", async (req, res) => {
     console.log(email, name, picture);
 
 
+    res.send("Hello World!");
+})
+
+
+router.post("/callback/google", async(req, res) => {
+    const credential = req.body["credential"];
+    const client = new OAuth2Client(config.GOOGLE_OAUTH_CLIENT_ID);
+    const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: config.GOOGLE_OAUTH_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    const name = payload.name;
+    const picture = payload.picture;
+    console.log(email, name, picture);
     res.send("Hello World!");
 })
 

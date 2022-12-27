@@ -10,6 +10,7 @@ const app = express();
 app.disable('x-powered-by')
 app.use(express.json());
 app.use(express.text());
+app.use(express.urlencoded({ extended: true }));
 
 // Auth Routes
 app.use('/auth', require('./routes/auth'));
