@@ -1,0 +1,24 @@
+{
+  "name": "portfolio_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "dbMigrate": "npx prisma migrate dev && npx prisma generate",
+    "dbDeploy": "npx prisma migrate deploy && npx prisma generate"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "prisma": "^4.8.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.8.0",
+    "axios": "^1.2.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}
