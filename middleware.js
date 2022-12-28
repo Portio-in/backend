@@ -24,7 +24,7 @@ class Middleware {
                     }
                 }
             })
-            req.user = user;
+            req.user = user.profille;
             next();
         } catch (err) {
             res.status(401).json({
