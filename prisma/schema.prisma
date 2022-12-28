@@ -8,7 +8,126 @@ datasource db {
   url      = env("DB_URL")
 }
 
+// Enums
+// Oauth types
+enum OauthType {
+  github
+  google
+}
 
-model test{
-  id Int @id @default(autoincrement())
+// Store all tech stack types
+model TechStackType {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  icon     String
+  profiles Profile[]
+  projects Project[]
+}
+
+// Store all social types
+model SocialType {
+  id          Int          @id @default(autoincrement())
+  type        String       @unique
+  icon        String
+  socialLinks SocialLink[]
+}
+
+// User profile 
+model Profile {
+  id             Int                 @id @default(autoincrement())
+  name           String
+  email          String              @unique
+  phone          String?             @default("")
+  avatar         String?             @default("")
+  description    String?             @default("")
+  techStacks     TechStackType[]
+  socialLinks    SocialLink[]
+  projects       Project[]
+  educations     Education[]
+  experiences    WorkingExperience[]
+  certifications Certification[]
+  achievements   Achievement[]
+  apiTokens      apiToken[]
+}
+
+// API token
+model apiToken {
+  id          Int       @id @default(autoincrement())
+  key         String    @unique
+  type        OauthType
+  accessToken String
+  profille    Profile   @relation(fields: [profileId], references: [id])
+  profileId   Int
+}
+
+// Social links
+model SocialLink {
+  id           Int        @id @default(autoincrement())
+  link         String
+  type         SocialType @relation(fields: [socialTypeId], references: [id])
+  socialTypeId Int
+  profileId    Int
+  profile      Profile    @relation(fields: [profileId], references: [id])
+}
+
+// Projects
+model Project {
+  id           Int             @id @default(autoincrement())
+  title        String
+  coverImage   String
+  images       String[]
+  description  String?         @default("")
+  techStacks   TechStackType[]
+  liveLink     String?         @default("#")
+  codeLink     String?         @default("#")
+  readmoreLink String?         @default("#")
+  startingDate DateTime?
+  endingDate   DateTime?
+  profileId    Int
+  profile      Profile         @relation(fields: [profileId], references: [id])
+}
+
+// Education
+model Education {
+  id              Int       @id @default(autoincrement())
+  courseName      String
+  institutionName String
+  score           String?   @default("")
+  subjects        String[]
+  startingDate    DateTime?
+  endingDate      DateTime?
+  profie          Profile   @relation(fields: [profileId], references: [id])
+  profileId       Int
+}
+
+// Working Experience
+model WorkingExperience {
+  id              Int       @id @default(autoincrement())
+  role            String
+  organization    String
+  startingDate    DateTime?
+  endingDate      DateTime?
+  accomplishments String[]
+  profile         Profile   @relation(fields: [profileId], references: [id])
+  profileId       Int
+}
+
+// Certifications
+model Certification {
+  id          Int       @id @default(autoincrement())
+  title       String
+  link        String
+  completedOn DateTime?
+  profile     Profile   @relation(fields: [profileId], references: [id])
+  profileId   Int
+}
+
+// Achievements
+model Achievement {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime?
+  profile     Profile   @relation(fields: [profileId], references: [id])
+  profileId   Int
 }

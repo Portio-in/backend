@@ -2,7 +2,8 @@ const router = require("express").Router();
 const prisma = require("../db").getInstance();
 const config = require("../config");
 const axios = require("axios").default;
-const {OAuth2Client} = require('google-auth-library');
+const { OAuth2Client } = require('google-auth-library');
+const { generateApiKey } = require('generate-api-key');
 
 
 // Auth redirection link
@@ -17,34 +18,31 @@ router.get("/callback/github", async (req, res) => {
     const access_token = response.data.split("&")[0].split("=")[1];
     // Fetch user profile
     const user = await axios.get("https://api.github.com/user", {
-        headers:{
+        headers: {
             "Authorization": "Bearer " + access_token
         }
     });
     const user_received_data = user.data;
     // Fetch user emails
     const emails = await axios.get("https://api.github.com/user/emails", {
-        headers:{
+        headers: {
             "Authorization": "Bearer " + access_token
         }
     });
     const emails_received_data = emails.data;
-    let confimed_email_record = emails_received_data.find(email => email.primary && email.verified && email.email.indexOf("noreply.github.com")!==-1);
-    if(confimed_email_record === undefined){
+    let confimed_email_record = emails_received_data.find(email => email.primary && email.verified && email.email.indexOf("noreply.github.com") !== -1);
+    if (confimed_email_record === undefined) {
         confimed_email_record = emails_received_data[0];
     }
     const email = confimed_email_record.email;
     const name = user_received_data.name;
     const picture = user_received_data.avatar_url;
-
-    console.log(email, name, picture);
-
-
-    res.send("Hello World!");
+    const api_token = await loginAndGenerateAPIToken(name, email, picture, access_token, "github");
+    res.send(api_token);
 })
 
 
-router.post("/callback/google", async(req, res) => {
+router.post("/callback/google", async (req, res) => {
     const credential = req.body["credential"];
     const client = new OAuth2Client(config.GOOGLE_OAUTH_CLIENT_ID);
     const ticket = await client.verifyIdToken({
@@ -55,8 +53,56 @@ router.post("/callback/google", async(req, res) => {
     const email = payload.email;
     const name = payload.name;
     const picture = payload.picture;
-    console.log(email, name, picture);
-    res.send("Hello World!");
+    // Login and generate api token
+    const api_token = await loginAndGenerateAPIToken(name, email, picture, credential, "google");
+    // Send api token
+    res.send(api_token);
 })
+
+
+// Helper function -> return api key
+async function loginAndGenerateAPIToken(name, email, picture, access_token, provider_type) {
+    let user; // User object 
+    // Check if user exists
+    const existing_user = await prisma.profile.findFirst({
+        where: {
+            email: email
+        },
+        select: {
+            id: true
+        }
+    })
+    if (existing_user !== null) {
+        // if user exists, set user
+        user = existing_user;
+    } else {
+        // Create new user
+        const new_user = await prisma.profile.create({
+            data: {
+                name: name,
+                avatar: picture,
+                email: email
+            },
+            select: {
+                id: true
+            }
+        })
+        // Set user
+        user = new_user;
+    }
+    // Create Auth Token Record
+    const api_token = await prisma.apiToken.create({
+        data: {
+            profileId: user.id,
+            accessToken: access_token,
+            type: provider_type,
+            key: generateApiKey({method: 'bytes', min: 35, max: 60})
+        },
+        select: {
+            key: true
+        }
+    })
+    return api_token;
+}
 
 module.exports = router;
