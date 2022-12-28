@@ -34,20 +34,20 @@ model SocialType {
 
 // User profile 
 model Profile {
-  id             Int                 @id @default(autoincrement())
-  name           String
-  email          String              @unique
-  phone          String?             @default("")
-  avatar         String?             @default("")
-  description    String?             @default("")
-  techStacks     TechStackType[]
-  socialLinks    SocialLink[]
-  projects       Project[]
-  educations     Education[]
-  experiences    WorkingExperience[]
-  certifications Certification[]
-  achievements   Achievement[]
-  apiTokens      apiToken[]
+  id           Int                 @id @default(autoincrement())
+  name         String
+  email        String              @unique
+  phone        String?             @default("")
+  avatar       String?             @default("")
+  description  String?             @default("")
+  techStacks   TechStackType[]
+  socialLinks  SocialLink[]
+  projects     Project[]
+  educations   Education[]
+  experiences  WorkingExperience[]
+  certificates Certificate[]
+  achievements Achievement[]
+  apiTokens    apiToken[]
 }
 
 // API token
@@ -112,8 +112,8 @@ model WorkingExperience {
   profileId       Int
 }
 
-// Certifications
-model Certification {
+// Certificate
+model Certificate {
   id          Int       @id @default(autoincrement())
   title       String
   link        String
