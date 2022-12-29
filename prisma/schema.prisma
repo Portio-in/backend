@@ -32,22 +32,36 @@ model SocialType {
   socialLinks SocialLink[]
 }
 
+// Store all available template
+model PortfolioTemplate {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  name          String
+  previewimg    String
+  author        String
+  githubLink    String
+  totalInstalls Int?      @default(0)
+  Profile       Profile[]
+}
+
 // User profile 
 model Profile {
-  id           Int                 @id @default(autoincrement())
-  name         String
-  email        String              @unique
-  phone        String?             @default("")
-  avatar       String?             @default("")
-  description  String?             @default("")
-  techStacks   TechStackType[]
-  socialLinks  SocialLink[]
-  projects     Project[]
-  educations   Education[]
-  experiences  WorkingExperience[]
-  certificates Certificate[]
-  achievements Achievement[]
-  apiTokens    apiToken[]
+  id                  Int                 @id @default(autoincrement())
+  name                String
+  email               String              @unique
+  phone               String?             @default("")
+  avatar              String?             @default("")
+  description         String?             @default("")
+  techStacks          TechStackType[]
+  socialLinks         SocialLink[]
+  projects            Project[]
+  educations          Education[]
+  experiences         WorkingExperience[]
+  certificates        Certificate[]
+  achievements        Achievement[]
+  apiTokens           apiToken[]
+  activeTemplate      PortfolioTemplate?  @relation(fields: [portfolioTemplateId], references: [id])
+  portfolioTemplateId String?
 }
 
 // API token
