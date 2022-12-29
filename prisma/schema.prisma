@@ -41,7 +41,7 @@ model PortfolioTemplate {
   author        String
   githubLink    String
   totalInstalls Int?      @default(0)
-  Profile       Profile[]
+  profiles       Profile[]
 }
 
 // User profile 
