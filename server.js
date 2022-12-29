@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', require('./routes/auth'));
 app.use('/available', require('./routes/available'));
 app.use('/profile', Middlware.auth, require('./routes/profile'));
+app.use('/techstack', Middlware.auth, require('./routes/techstack'));
 app.use('/link', Middlware.auth, require('./routes/link'));
 app.use('/project', Middlware.auth, require('./routes/project'));
 app.use('/education', Middlware.auth, require('./routes/education'));
