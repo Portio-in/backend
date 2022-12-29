@@ -26,4 +26,23 @@ router.get("/sociallink", async (req, res) => {
     res.json(sociallinks);
 })
 
+// Fetch all portfolio templates
+router.get("/template", async (req, res) => {
+    const templates = await prisma.portfolioTemplate.findMany({
+        select: {
+            id: true,
+            code: true,
+            name: true,
+            previewimg: true,
+            author: true,
+            githubLink: true,
+            totalInstalls: true
+        },
+        orderBy: {
+            totalInstalls: "desc"
+        }
+    });
+    res.json(templates);
+})
+
 module.exports = router;
