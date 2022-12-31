@@ -92,9 +92,9 @@ model Project {
   images       String[]
   description  String?         @default("")
   techStacks   TechStackType[]
-  liveLink     String?         @default("#")
-  codeLink     String?         @default("#")
-  readmoreLink String?         @default("#")
+  liveLink     String?
+  codeLink     String?
+  readMoreLink String?
   startingDate DateTime
   endingDate   DateTime?
   profileId    Int
