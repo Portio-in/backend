@@ -25,4 +25,27 @@ app.use('/experience', Middlware.auth, require('./routes/experience'));
 app.use('/certificate', Middlware.auth, require('./routes/certificate'));
 app.use('/achievement', Middlware.auth, require('./routes/achievement'));
 
+// 404 handler
+app.get('*', (req, res) => {
+    res.status(404).json({ error: "Not Found" });
+})
+app.post('*', (req, res) => {
+    res.status(404).json({ error: "Not Found" });
+})
+app.patch('*', (req, res) => {
+    res.status(404).json({ error: "Not Found" });
+})
+app.put('*', (req, res) => {
+    res.status(404).json({ error: "Not Found" });
+})
+app.delete('*', (req, res) => {
+    res.status(404).json({ error: "Not Found" });
+})
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).json({ error: "Unexpected Error" });
+})
+
 app.listen(PORT, () => console.log(`🚀 @ http://localhost:${PORT}`));
