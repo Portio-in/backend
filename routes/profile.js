@@ -17,7 +17,18 @@ router.get("/", async (req, res, next) => {
                 avatar: true,
                 phone: true,
                 description: true,
-                domain: true
+                domain: true,
+                activeTemplate: {
+                    select: {
+                        id: true,
+                        name: true,
+                        code: true,
+                        author: true,
+                        githubLink: true,
+                        previewimg: true,
+                        totalInstalls: true
+                    }
+                }
             }
         })
         res.send(profile);
@@ -47,7 +58,18 @@ router.put("/", async (req, res, next) => {
                 avatar: true,
                 phone: true,
                 description: true,
-                domain: true
+                domain: true,
+                activeTemplate: {
+                    select: {
+                        id: true,
+                        name: true,
+                        code: true,
+                        author: true,
+                        githubLink: true,
+                        previewimg: true,
+                        totalInstalls: true
+                    }
+                }
             }
         })
         res.send(profile);
@@ -75,13 +97,75 @@ router.patch("/domain", async (req, res, next) => {
                 avatar: true,
                 phone: true,
                 description: true,
-                domain: true
+                domain: true,
+                activeTemplate: {
+                    select: {
+                        id: true,
+                        name: true,
+                        code: true,
+                        author: true,
+                        githubLink: true,
+                        previewimg: true,
+                        totalInstalls: true
+                    }
+                }
             }
         })
         res.send(profile);
     } catch (error) {
         next(error);
     }
+})
+
+// API to update template
+router.patch("/template", async (req, res, next) => {
+    try {
+        const user = req.user;
+        const { template_id } = req.body;
+        const profile = await prisma.profile.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                activeTemplateId: template_id
+            },
+            select: {
+                name: true,
+                email: true,
+                avatar: true,
+                phone: true,
+                description: true,
+                domain: true,
+                activeTemplate: {
+                    select: {
+                        id: true,
+                        name: true,
+                        code: true,
+                        author: true,
+                        githubLink: true,
+                        previewimg: true,
+                        totalInstalls: true
+                    }
+                }
+            }
+        });
+
+        await prisma.portfolioTemplate.update({
+            where: {
+                id: template_id
+            },
+            data: {
+                totalInstalls: {
+                    increment: 1
+                }
+            }
+        })
+
+        res.send(profile);
+    } catch (error) {
+        next(error);
+    }
+
 })
 
 module.exports = router;

@@ -61,8 +61,8 @@ model Profile {
   certificates        Certificate[]
   achievements        Achievement[]
   apiTokens           apiToken[]
-  activeTemplate      PortfolioTemplate?  @relation(fields: [portfolioTemplateId], references: [id])
-  portfolioTemplateId String?
+  activeTemplate      PortfolioTemplate?  @relation(fields: [activeTemplateId], references: [id])
+  activeTemplateId String?
 }
 
 // API token
