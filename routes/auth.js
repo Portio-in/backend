@@ -84,12 +84,15 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
         // if user exists, set user
         user = existing_user;
     } else {
+        
+        const random_username = name.split(" ")[0].toString().toLowerCase() + generateApiKey({method: 'bytes', min: 6, max: 8});
         // Create new user
         const new_user = await prisma.profile.create({
             data: {
                 name: name,
                 avatar: picture,
-                email: email
+                email: email,
+                domain: random_username+"."+config.PORTFOLIO_BASE_DOMAIN
             },
             select: {
                 id: true

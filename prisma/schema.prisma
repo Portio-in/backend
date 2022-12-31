@@ -41,7 +41,7 @@ model PortfolioTemplate {
   author        String
   githubLink    String
   totalInstalls Int?      @default(0)
-  profiles       Profile[]
+  profiles      Profile[]
 }
 
 // User profile 
@@ -49,6 +49,7 @@ model Profile {
   id                  Int                 @id @default(autoincrement())
   name                String
   email               String              @unique
+  domain              String              @unique
   phone               String?             @default("")
   avatar              String?             @default("")
   description         String?             @default("")
@@ -128,20 +129,20 @@ model WorkingExperience {
 
 // Certificate
 model Certificate {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   link        String
   completedOn DateTime
-  profile     Profile   @relation(fields: [profileId], references: [id])
+  profile     Profile  @relation(fields: [profileId], references: [id])
   profileId   Int
 }
 
 // Achievements
 model Achievement {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   description String
   date        DateTime
-  profile     Profile   @relation(fields: [profileId], references: [id])
+  profile     Profile  @relation(fields: [profileId], references: [id])
   profileId   Int
 }
