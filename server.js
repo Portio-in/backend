@@ -30,6 +30,7 @@ app.use('/education', Middlware.auth, require('./routes/education'));
 app.use('/experience', Middlware.auth, require('./routes/experience'));
 app.use('/certificate', Middlware.auth, require('./routes/certificate'));
 app.use('/achievement', Middlware.auth, require('./routes/achievement'));
+app.use("/profile.json", require("./routes/profile.fetch"));
 
 // 404 handler
 app.get('*', (req, res) => {
