@@ -6,12 +6,18 @@ const DEBUG = process.env.DEBUG || false;
 // Express
 const express = require('express');
 const Middlware = require("./middleware");
+var cors = require('cors')
 const app = express();
 // Config
 app.disable('x-powered-by')
 app.use(express.json());
 app.use(express.text());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    optionsSuccessStatus: 200
+}))
 
 // Auth Routes
 app.use('/auth', require('./routes/auth'));
