@@ -95,7 +95,7 @@ model Project {
   liveLink     String?         @default("#")
   codeLink     String?         @default("#")
   readmoreLink String?         @default("#")
-  startingDate DateTime?
+  startingDate DateTime
   endingDate   DateTime?
   profileId    Int
   profile      Profile         @relation(fields: [profileId], references: [id])
@@ -108,7 +108,7 @@ model Education {
   institutionName String
   score           String?   @default("")
   subjects        String[]
-  startingDate    DateTime?
+  startingDate    DateTime
   endingDate      DateTime?
   profie          Profile   @relation(fields: [profileId], references: [id])
   profileId       Int
@@ -119,7 +119,7 @@ model WorkingExperience {
   id              Int       @id @default(autoincrement())
   role            String
   organization    String
-  startingDate    DateTime?
+  startingDate    DateTime
   endingDate      DateTime?
   accomplishments String[]
   profile         Profile   @relation(fields: [profileId], references: [id])
@@ -131,7 +131,7 @@ model Certificate {
   id          Int       @id @default(autoincrement())
   title       String
   link        String
-  completedOn DateTime?
+  completedOn DateTime
   profile     Profile   @relation(fields: [profileId], references: [id])
   profileId   Int
 }
@@ -141,7 +141,7 @@ model Achievement {
   id          Int       @id @default(autoincrement())
   title       String
   description String
-  date        DateTime?
+  date        DateTime
   profile     Profile   @relation(fields: [profileId], references: [id])
   profileId   Int
 }
