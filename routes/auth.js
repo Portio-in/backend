@@ -36,7 +36,7 @@ router.get("/callback/github", async (req, res, next) => {
             confimed_email_record = emails_received_data[0];
         }
         const email = confimed_email_record.email;
-        const name = user_received_data.name;
+        const name = user_received_data.name || user_received_data.login;
         const picture = user_received_data.avatar_url;
         const api_token = await loginAndGenerateAPIToken(name, email, picture, access_token, "github");
         res.redirect(process.env.AUTH_REDIRECT_URL + "?token=" + api_token);
