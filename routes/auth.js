@@ -8,7 +8,7 @@ const { generateApiKey } = require('generate-api-key');
 
 // Auth redirection link
 router.get("/github", (req, res) => {
-    res.redirect("https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_OAUTH_CLIENT_ID);
+    res.redirect("https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_OAUTH_CLIENT_ID+"&scope=user");
 })
 
 // Auth callback
