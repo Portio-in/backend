@@ -14,6 +14,7 @@ router.get("/all", async (req, res, next) => {
                 title: true,
                 description: true,
                 date: true,
+                referenceLink: true
             }
         });
         res.status(200).json(achievements);
@@ -25,7 +26,7 @@ router.get("/all", async (req, res, next) => {
 // Add a new record
 router.post("/", async (req, res, next) => {
     try {
-        const { title, description, date } = req.body;
+        const { title, description, date, reference_link } = req.body;
         if(title === "" || title === undefined || title ===null) return res.status(400).json({ error: "Missing title" });
         if(description === "" || description === undefined || description ===null) return res.status(400).json({ error: "Missing description" });
         if(date === "" || date === undefined || date ===null) return res.status(400).json({ error: "Missing date" });
@@ -33,11 +34,14 @@ router.post("/", async (req, res, next) => {
         const date_formatted = new Date(date);
         if(date_formatted.toString() === "Invalid Date") return res.status(400).json({ error: "Invalid date" });
 
+        const referenceLink = (reference_link === "" || reference_link === undefined || reference_link === null)? "" : reference_link;
+
         const achievement = await prisma.achievement.create({
             data: {
                 title,
                 description,
                 date: date_formatted,
+                referenceLink,
                 profile: {
                     connect: {
                         id: req.user.id
@@ -69,6 +73,7 @@ router.get("/:id", async (req, res, next) => {
                 id: true,
                 title: true,
                 description: true,
+                referenceLink: true,
                 date: true
             }
         })
@@ -82,13 +87,14 @@ router.get("/:id", async (req, res, next) => {
 // Update a record
 router.put("/:id", async (req, res, next) => {
     try {
-        const { title, description, date } = req.body;
+        const { title, description, date, reference_link } = req.body;
         if(title === "" || title === undefined || title ===null) return res.status(400).json({ error: "Missing title" });
         if(description === "" || description === undefined || description ===null) return res.status(400).json({ error: "Missing description" });
         if(date === "" || date === undefined || date ===null) return res.status(400).json({ error: "Missing date" });
 
         const date_formatted = new Date(date);
         if(date_formatted.toString() === "Invalid Date") return res.status(400).json({ error: "Invalid date" });
+        const referenceLink = (reference_link === "" || reference_link === undefined || reference_link === null)? "" : reference_link;
 
         // Verify if the record exists and belongs to the user
         await prisma.achievement.findFirstOrThrow({
@@ -106,12 +112,14 @@ router.put("/:id", async (req, res, next) => {
             data: {
                 title,
                 description,
+                referenceLink,
                 date: date_formatted
             },
             select: {
                 id: true,
                 title: true,
                 description: true,
+                referenceLink: true,
                 date: true
             }
         })

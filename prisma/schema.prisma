@@ -46,22 +46,22 @@ model PortfolioTemplate {
 
 // User profile 
 model Profile {
-  id                  Int                 @id @default(autoincrement())
-  name                String
-  email               String              @unique
-  domain              String              @unique
-  phone               String?             @default("")
-  avatar              String?             @default("")
-  description         String?             @default("")
-  techStacks          TechStackType[]
-  socialLinks         SocialLink[]
-  projects            Project[]
-  educations          Education[]
-  experiences         WorkingExperience[]
-  certificates        Certificate[]
-  achievements        Achievement[]
-  apiTokens           apiToken[]
-  activeTemplate      PortfolioTemplate?  @relation(fields: [activeTemplateId], references: [id])
+  id               Int                 @id @default(autoincrement())
+  name             String
+  email            String              @unique
+  domain           String              @unique
+  phone            String?             @default("")
+  avatar           String?             @default("")
+  description      String?             @default("")
+  techStacks       TechStackType[]
+  socialLinks      SocialLink[]
+  projects         Project[]
+  educations       Education[]
+  experiences      WorkingExperience[]
+  certificates     Certificate[]
+  achievements     Achievement[]
+  apiTokens        apiToken[]
+  activeTemplate   PortfolioTemplate?  @relation(fields: [activeTemplateId], references: [id])
   activeTemplateId String?
 }
 
@@ -131,6 +131,7 @@ model WorkingExperience {
 model Certificate {
   id          Int      @id @default(autoincrement())
   title       String
+  providedBy  String
   link        String
   completedOn DateTime
   profile     Profile  @relation(fields: [profileId], references: [id])
@@ -139,10 +140,11 @@ model Certificate {
 
 // Achievements
 model Achievement {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  date        DateTime
-  profile     Profile  @relation(fields: [profileId], references: [id])
-  profileId   Int
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String
+  referenceLink   String
+  date            DateTime
+  profile         Profile  @relation(fields: [profileId], references: [id])
+  profileId       Int
 }

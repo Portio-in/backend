@@ -13,7 +13,8 @@ router.get("/all", async (req, res, next) => {
                 id: true,
                 title: true,
                 link: true,
-                completedOn: true
+                completedOn: true,
+                providedBy: true
             }
         });
         res.status(200).json(certificates);
@@ -25,10 +26,11 @@ router.get("/all", async (req, res, next) => {
 // Add a new certificate
 router.post("/", async (req, res, next) => {
     try {
-        const { title, link, completed_on } = req.body;
+        const { title, link, completed_on, provided_by } = req.body;
         if(title === "" || title === undefined || title === null) res.status(400).json({ message: "Missing title" });
         if(link === "" || link === undefined || link === null) res.status(400).json({ message: "Missing link" });
         if(completed_on === "" || completed_on === undefined || completed_on === null) res.status(400).json({ message: "Missing completed_on" });
+        if(provided_by === "" || provided_by === undefined || provided_by === null) res.status(400).json({ message: "Missing provided_by" });
 
         let completedOn = new Date(completed_on);
         if(completedOn == "Invalid Date") res.status(400).json({ message: "Invalid completed_on" });
@@ -38,13 +40,15 @@ router.post("/", async (req, res, next) => {
                 title,
                 link,
                 completedOn,
+                providedBy: provided_by,
                 profileId: req.user.id
             },
             select: {
                 id: true,
                 title: true,
                 link: true,
-                completedOn: true
+                completedOn: true,
+                providedBy: true
             }
         });
         res.status(200).json(certificate);
@@ -56,10 +60,11 @@ router.post("/", async (req, res, next) => {
 // Update a certificate
 router.put("/:id", async (req, res, next) => {
     try {
-        const { title, link, completed_on } = req.body;
+        const { title, link, completed_on, provided_by } = req.body;
         if(title === "" || title === undefined || title === null) res.status(400).json({ message: "Missing title" });
         if(link === "" || link === undefined || link === null) res.status(400).json({ message: "Missing link" });
         if(completed_on === "" || completed_on === undefined || completed_on === null) res.status(400).json({ message: "Missing completed_on" });
+        if(provided_by === "" || provided_by === undefined || provided_by === null) res.status(400).json({ message: "Missing provided_by" });
 
         let completedOn = new Date(completed_on);
         if(completedOn == "Invalid Date") res.status(400).json({ message: "Invalid completed_on" });
@@ -80,13 +85,15 @@ router.put("/:id", async (req, res, next) => {
             data: {
                 title,
                 link,
-                completedOn
+                completedOn,
+                providedBy: provided_by
             },
             select: {
                 id: true,
                 title: true,
                 link: true,
-                completedOn: true
+                completedOn: true,
+                providedBy: true
             }
         });
         res.status(200).json(certificate);
