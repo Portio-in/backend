@@ -1,4 +1,4 @@
 node_modules
 prisma/migrations
-.env
 config.js
+.env

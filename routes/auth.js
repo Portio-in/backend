@@ -39,7 +39,7 @@ router.get("/callback/github", async (req, res, next) => {
         const name = user_received_data.name;
         const picture = user_received_data.avatar_url;
         const api_token = await loginAndGenerateAPIToken(name, email, picture, access_token, "github");
-        res.send(api_token);
+        res.redirect(process.env.AUTH_REDIRECT_URL + "?token=" + api_token);
     } catch (error) {
         next(error);
     }
@@ -61,7 +61,7 @@ router.post("/callback/google", async (req, res, next) => {
         // Login and generate api token
         const api_token = await loginAndGenerateAPIToken(name, email, picture, credential, "google");
         // Send api token
-        res.send(api_token);
+        res.redirect(process.env.AUTH_REDIRECT_URL + "?token=" + api_token);
     } catch (error) {
         next(error);
     }
@@ -113,7 +113,7 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
             key: true
         }
     })
-    return api_token;
+    return api_token.key;
 }
 
 module.exports = router;
