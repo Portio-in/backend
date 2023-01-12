@@ -2,11 +2,34 @@ const router = require("express").Router();
 const prisma = require("../db").getInstance();
 const config = require("../config");
 const axios = require("axios").default;
-const { OAuth2Client } = require('google-auth-library');
+const {google} = require('googleapis');
 const { generateApiKey } = require('generate-api-key');
+const {GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_REDIRECT_URI, GOOGLE_OAUTH_CLIENT_SECRET} = require("../config")
 
 
 // Auth redirection link
+router.get("/google", (req, res)=>{
+    const oauth2Client = new google.auth.OAuth2(
+        GOOGLE_OAUTH_CLIENT_ID,
+        GOOGLE_OAUTH_CLIENT_SECRET,
+        GOOGLE_OAUTH_REDIRECT_URI
+    );
+    const scopes = [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email'
+    ];
+    const authorizationUrl = oauth2Client.generateAuthUrl({
+        // 'online' (default) or 'offline' (gets refresh_token)
+        access_type: 'online',
+        /** Pass in the scopes array defined above.
+          * Alternatively, if only one scope is needed, you can pass a scope URL as a string */
+        scope: scopes,
+        // Enable incremental authorization. Recommended as a best practice.
+        include_granted_scopes: true
+    });
+    res.redirect(authorizationUrl)
+})
+
 router.get("/github", (req, res) => {
     res.redirect("https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_OAUTH_CLIENT_ID+"&scope=user");
 })
@@ -46,22 +69,29 @@ router.get("/callback/github", async (req, res, next) => {
 })
 
 
-router.post("/callback/google", async (req, res, next) => {
+router.get("/callback/google", async (req, res, next) => {
     try {
-        const credential = req.body["credential"];
-        const client = new OAuth2Client(config.GOOGLE_OAUTH_CLIENT_ID);
-        const ticket = await client.verifyIdToken({
-            idToken: credential,
-            audience: config.GOOGLE_OAUTH_CLIENT_ID,
-        });
-        const payload = ticket.getPayload();
-        const email = payload.email;
-        const name = payload.name;
-        const picture = payload.picture;
-        // Login and generate api token
-        const api_token = await loginAndGenerateAPIToken(name, email, picture, credential, "google");
-        // Send api token
-        res.redirect(process.env.AUTH_REDIRECT_URL + "?token=" + api_token);
+        const credential = req.query["code"];
+        const oauth2Client = new google.auth.OAuth2(
+            GOOGLE_OAUTH_CLIENT_ID,
+            GOOGLE_OAUTH_CLIENT_SECRET,
+            GOOGLE_OAUTH_REDIRECT_URI
+        );
+        let { tokens } = await oauth2Client.getToken(credential);
+        oauth2Client.setCredentials(tokens);
+        google.oauth2("v2").userinfo.get({
+            auth: oauth2Client
+        }, async(err, data) => {
+            if(err) next("Failed to authenticate")
+            let payload = data.data;
+            const email = payload.email;
+            const name = payload.name;
+            const picture = payload.picture;
+            // Login and generate api token
+            const api_token = await loginAndGenerateAPIToken(name, email, picture, credential, "google");
+            // Send api token
+            res.redirect(process.env.AUTH_REDIRECT_URL + "?token=" + api_token);
+        })        
     } catch (error) {
         next(error);
     }
