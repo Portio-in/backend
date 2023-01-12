@@ -52,6 +52,7 @@ router.post("/", async (req, res, next) => {
                 id: true,
                 title: true,
                 description: true,
+                referenceLink: true,
                 date: true
             }
         })
