@@ -66,6 +66,13 @@ router.put("/", async (req, res, next) => {
                 phone: true,
                 description: true,
                 domain: true,
+                techStacks: {
+                    select: {
+                        id: true,
+                        name: true,
+                        icon: true
+                    }
+                },
                 activeTemplate: {
                     select: {
                         id: true,
@@ -105,6 +112,13 @@ router.patch("/domain", async (req, res, next) => {
                 phone: true,
                 description: true,
                 domain: true,
+                techStacks: {
+                    select: {
+                        id: true,
+                        name: true,
+                        icon: true
+                    }
+                },
                 activeTemplate: {
                     select: {
                         id: true,
@@ -143,6 +157,13 @@ router.patch("/template", async (req, res, next) => {
                 phone: true,
                 description: true,
                 domain: true,
+                techStacks: {
+                    select: {
+                        id: true,
+                        name: true,
+                        icon: true
+                    }
+                },
                 activeTemplate: {
                     select: {
                         id: true,
