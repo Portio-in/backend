@@ -12,6 +12,7 @@ router.get("/", async (req, res, next) => {
                 id: user.id
             },
             select: {
+                id: true,
                 name: true,
                 email: true,
                 avatar: true,
@@ -60,6 +61,7 @@ router.put("/", async (req, res, next) => {
                 description: description
             },
             select: {
+                id: true,
                 name: true,
                 email: true,
                 avatar: true,
@@ -106,6 +108,7 @@ router.patch("/domain", async (req, res, next) => {
                 domain: domain
             },
             select: {
+                id: true,
                 name: true,
                 email: true,
                 avatar: true,
@@ -151,6 +154,7 @@ router.patch("/template", async (req, res, next) => {
                 activeTemplateId: template_id
             },
             select: {
+                id: true,
                 name: true,
                 email: true,
                 avatar: true,
