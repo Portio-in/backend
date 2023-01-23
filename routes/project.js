@@ -41,7 +41,6 @@ router.post("/", async (req, res, next) => {
         let { title, description, cover_image, images, tech_stacks_id, live_link, code_link, read_more_link, starting_date, ending_date } = req.body;
         if(title === "" || title === undefined || title === null) return res.status(400).json({ error: "Missing title" });
         if(description === "" || description === undefined || description === null) return res.status(400).json({ error: "Missing description" });
-        if(cover_image === "" || cover_image === undefined || cover_image === null) return res.status(400).json({ error: "Missing cover_image" });
         if(images === "" || images === undefined || images === null) return res.status(400).json({ error: "Missing images" });
         if(tech_stacks_id === "" || tech_stacks_id === undefined || tech_stacks_id === null) return res.status(400).json({ error: "Missing tech_stacks_id" });
         if(live_link === "" || live_link === undefined || live_link === null) live_link = null;
@@ -56,11 +55,13 @@ router.post("/", async (req, res, next) => {
         let ending_date_formatted = new Date(ending_date);
         if(ending_date_formatted.toString() === "Invalid Date") ending_date_formatted = null;
 
+        let cover_image_formatted = (cover_image === "" || cover_image === undefined || cover_image === null) ?  "http://www.tgsin.in/images/joomlart/demo/default.jpg" : cover_image;
+
         const project = await prisma.project.create({
             data: {
                 title,
                 description,
-                coverImage: cover_image,
+                coverImage: cover_image_formatted,
                 images,
                 techStacks: {
                     connect: tech_stacks_id.map(id => ({ id: id }))
