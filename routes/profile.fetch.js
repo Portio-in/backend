@@ -17,6 +17,7 @@ router.get("/", async (req, res, next) => {
                 phone: true,
                 avatar: true,
                 description: true,
+                tagline: true,
                 techStacks: {
                     select: {
                         name: true,
