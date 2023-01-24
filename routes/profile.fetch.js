@@ -76,6 +76,7 @@ router.get("/", async (req, res, next) => {
                     select: {
                         title: true,
                         link: true,
+                        providedBy: true,
                         completedOn: true,
                     }
                 },
@@ -83,6 +84,7 @@ router.get("/", async (req, res, next) => {
                     select: {
                         title: true,
                         description: true,
+                        referenceLink: true,
                         date: true,
                     }
                 }
