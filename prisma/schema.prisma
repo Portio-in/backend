@@ -53,6 +53,7 @@ model Profile {
   phone            String?             @default("")
   avatar           String?             @default("")
   description      String?             @default("")
+  tagline          String?             @default("")
   techStacks       TechStackType[]
   socialLinks      SocialLink[]
   projects         Project[]
@@ -140,11 +141,11 @@ model Certificate {
 
 // Achievements
 model Achievement {
-  id              Int      @id @default(autoincrement())
-  title           String
-  description     String
-  referenceLink   String
-  date            DateTime
-  profile         Profile  @relation(fields: [profileId], references: [id])
-  profileId       Int
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  referenceLink String
+  date          DateTime
+  profile       Profile  @relation(fields: [profileId], references: [id])
+  profileId     Int
 }

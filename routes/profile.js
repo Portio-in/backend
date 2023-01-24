@@ -18,6 +18,7 @@ router.get("/", async (req, res, next) => {
                 avatar: true,
                 phone: true,
                 description: true,
+                tagline: true,
                 domain: true,
                 techStacks: {
                     select: {
@@ -49,7 +50,7 @@ router.get("/", async (req, res, next) => {
 router.put("/", async (req, res, next) => {
     try {
         const user = req.user;
-        const { name, avatar, phone, description } = req.body;
+        const { name, avatar, phone, description, tagline } = req.body;
         const profile = await prisma.profile.update({
             where: {
                 id: user.id
@@ -58,7 +59,8 @@ router.put("/", async (req, res, next) => {
                 name: name,
                 avatar: avatar,
                 phone: phone,
-                description: description
+                description: description,
+                tagline: tagline
             },
             select: {
                 id: true,
@@ -67,6 +69,7 @@ router.put("/", async (req, res, next) => {
                 avatar: true,
                 phone: true,
                 description: true,
+                tagline: true,
                 domain: true,
                 techStacks: {
                     select: {
