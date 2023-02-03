@@ -54,7 +54,7 @@ router.put("/", async (req, res, next) => {
         if(tech_stacks_id === null || tech_stacks_id === undefined) tech_stacks_id = [];
 
         // fetch all techstacks id previous
-        const prev_tech_stacks = await prisma.profile.findFirstOrThrow({
+        const prev_tech_stacks = await prisma.profile.findFirst({
             where: {
                 id: user.id
             },
