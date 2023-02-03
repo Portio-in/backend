@@ -50,7 +50,9 @@ router.get("/", async (req, res, next) => {
 router.put("/", async (req, res, next) => {
     try {
         const user = req.user;
-        const { name, avatar, phone, description, tagline } = req.body;
+        const { name, avatar, phone, description, tagline, tech_stacks_id } = req.body;
+        if(tech_stacks_id === null || tech_stacks_id === undefined) tech_stacks_id = [];
+
         const profile = await prisma.profile.update({
             where: {
                 id: user.id
@@ -60,7 +62,10 @@ router.put("/", async (req, res, next) => {
                 avatar: avatar,
                 phone: phone,
                 description: description,
-                tagline: tagline
+                tagline: tagline,
+                techStacks: {
+                    connect: tech_stacks_id.map(id => ({ id: id }))
+                }
             },
             select: {
                 id: true,
@@ -91,6 +96,7 @@ router.put("/", async (req, res, next) => {
                 }
             }
         })
+        
         res.send(profile);
     } catch (error) {
         next(error);
@@ -102,7 +108,6 @@ router.patch("/domain", async (req, res, next) => {
     try {
         const user = req.user;
         const { domain } = req.body;
-        // TODO Some checks
         const profile = await prisma.profile.update({
             where: {
                 id: user.id
