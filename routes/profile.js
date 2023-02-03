@@ -53,6 +53,23 @@ router.put("/", async (req, res, next) => {
         const { name, avatar, phone, description, tagline, tech_stacks_id } = req.body;
         if(tech_stacks_id === null || tech_stacks_id === undefined) tech_stacks_id = [];
 
+        // fetch all techstacks id previous
+        const prev_tech_stacks = await prisma.profile.findFirstOrThrow({
+            where: {
+                id: user.id
+            },
+            select: {
+                techStacks: {
+                    select: {
+                        id: true
+                    }
+                }
+            }
+        })
+        const prev_tech_stacks_id = prev_tech_stacks.techStacks.map(tech_stack => tech_stack.id);
+        const delete_tech_stacks_id = prev_tech_stacks_id.filter(id => !tech_stacks_id.includes(id));
+        const add_tech_stacks_id = tech_stacks_id.filter(id => !prev_tech_stacks_id.includes(id));
+
         const profile = await prisma.profile.update({
             where: {
                 id: user.id
@@ -64,7 +81,8 @@ router.put("/", async (req, res, next) => {
                 description: description,
                 tagline: tagline,
                 techStacks: {
-                    connect: tech_stacks_id.map(id => ({ id: id }))
+                    disconnect: delete_tech_stacks_id.map(id => ({ id: id })),
+                    connect: add_tech_stacks_id.map(id => ({ id: id }))
                 }
             },
             select: {
