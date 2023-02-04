@@ -125,7 +125,15 @@ router.put("/", async (req, res, next) => {
 router.patch("/domain", async (req, res, next) => {
     try {
         const user = req.user;
-        const { domain } = req.body;
+        let { domain } = req.body;
+        domain = domain.toLowerCase();
+        if(domain.startsWith("https://")) domain = domain.slice(8);
+        if(domain.startsWith("http://")) domain = domain.slice(7);
+        if(domain.startsWith("www.")) domain = domain.slice(4);
+        if(domain.endsWith("/")) domain = domain.slice(0, -1);
+
+        if(!domain.endsWith(".portio.in")) return res.status(400).json({ error: "Currently supports only portio.in domains" });
+
         const profile = await prisma.profile.update({
             where: {
                 id: user.id
