@@ -18,6 +18,7 @@ router.get("/", async (req, res, next) => {
                 avatar: true,
                 description: true,
                 tagline: true,
+                resumeLink: true,
                 techStacks: {
                     select: {
                         name: true,

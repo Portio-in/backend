@@ -54,6 +54,7 @@ model Profile {
   avatar           String?             @default("")
   description      String?             @default("")
   tagline          String?             @default("")
+  resumeLink       String?              @default("")
   techStacks       TechStackType[]
   socialLinks      SocialLink[]
   projects         Project[]

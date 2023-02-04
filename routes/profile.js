@@ -1,5 +1,3 @@
-const { route } = require("./auth");
-
 const router = require("express").Router();
 const prisma = require("../db").getInstance();
 
@@ -19,6 +17,7 @@ router.get("/", async (req, res, next) => {
                 phone: true,
                 description: true,
                 tagline: true,
+                resumeLink: true,
                 domain: true,
                 techStacks: {
                     select: {
@@ -50,7 +49,7 @@ router.get("/", async (req, res, next) => {
 router.put("/", async (req, res, next) => {
     try {
         const user = req.user;
-        const { name, avatar, phone, description, tagline, tech_stacks_id } = req.body;
+        const { name, avatar, phone, description, tagline, tech_stacks_id, resume_link } = req.body;
         if(tech_stacks_id === null || tech_stacks_id === undefined) tech_stacks_id = [];
 
         // fetch all techstacks id previous
@@ -80,6 +79,7 @@ router.put("/", async (req, res, next) => {
                 phone: phone,
                 description: description,
                 tagline: tagline,
+                resumeLink: resume_link,
                 techStacks: {
                     disconnect: delete_tech_stacks_id.map(id => ({ id: id })),
                     connect: add_tech_stacks_id.map(id => ({ id: id }))
@@ -94,6 +94,7 @@ router.put("/", async (req, res, next) => {
                 description: true,
                 tagline: true,
                 domain: true,
+                resumeLink: true,
                 techStacks: {
                     select: {
                         id: true,
