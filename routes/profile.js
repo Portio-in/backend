@@ -218,7 +218,7 @@ router.patch("/template", async (req, res, next) => {
             }
         });
 
-        await prisma.portfolioTemplate.update({
+        const template = await prisma.portfolioTemplate.update({
             where: {
                 id: template_id
             },
@@ -226,10 +226,20 @@ router.patch("/template", async (req, res, next) => {
                 totalInstalls: {
                     increment: 1
                 }
+            },
+            select: {
+                code: true
             }
         })
 
-        res.send(profile);
+        Utils.triggerTemplateRebuild(profile.domain, template.code)
+        .then(() => {
+            res.send(profile);
+        })
+        .catch(error => {
+            next(error);
+        })
+
     } catch (error) {
         next(error);
     }
