@@ -64,6 +64,7 @@ router.post("/", async (req, res, next) => {
                 endingDate: true,
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json(result);
     } catch (error) {
         next(error);
@@ -140,6 +141,7 @@ router.put("/:id", async (req, res, next) => {
                 endingDate: true,
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json(result);
     } catch (error) {
         next(error);
@@ -163,6 +165,7 @@ router.delete("/:id", async (req, res) => {
                 id: parseInt(req.params.id)
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json({ message: "Experience record deleted" });
     } catch (error) {
         next(error);
