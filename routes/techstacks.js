@@ -44,7 +44,7 @@ router.put("/", async (req, res) => {
             }
         }
     })
-
+    await req.triggerRebuildPortfolio();
     res.json(profile_techstacks.techStacks || []);
 });
 
