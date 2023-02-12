@@ -114,8 +114,24 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
         // if user exists, set user
         user = existing_user;
     } else {
+        // TODO check first if username is available
+        let random_username = name.replace(".", "").split(" ")[0].toString().toLowerCase();
+        if(random_username.length < 3) {
+            random_username = random_username + generateApiKey({method: 'bytes', min: 6, max: 8});
+        }
+        while(true){
+            const found_any_user = await prisma.profile.findFirst({
+                where: {
+                    domain: random_username+"."+config.PORTFOLIO_BASE_DOMAIN
+                }
+            })
+            if(found_any_user === null) {
+                break;
+            }
+            random_username = random_username + generateApiKey({method: 'bytes', min: 6, max: 8});
+        }
         
-        const random_username = name.split(" ")[0].toString().toLowerCase() + generateApiKey({method: 'bytes', min: 6, max: 8});
+        
         // Create new user
         const new_user = await prisma.profile.create({
             data: {
@@ -130,6 +146,28 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
         })
         // Set user
         user = new_user;
+
+        // Attach high rated portfolio
+        const portfolio = await prisma.portfolioTemplate.findFirst({
+            orderBy: {
+                totalInstalls: "desc"
+            },
+            select: {
+                id: true
+            }
+        })
+        await prisma.profile.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                activeTemplate: {
+                    connect: {
+                        id: portfolio.id
+                    }
+                }
+            }
+        })
     }
     // Create Auth Token Record
     const api_token = await prisma.apiToken.create({
@@ -143,6 +181,7 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
             key: true
         }
     })
+
     return api_token.key;
 }
 
