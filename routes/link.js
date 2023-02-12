@@ -61,6 +61,7 @@ router.post("/", async (req, res, next) => {
                 }
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json(social_link);
     } catch (error) {
         next(error);
@@ -133,6 +134,7 @@ router.put("/:id", async (req, res, next) => {
                 }
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json(social_link);
     } catch (error) {
         next(error);
@@ -159,6 +161,7 @@ router.delete("/:id", async (req, res, next) => {
                 id: parseInt(id)
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json({ message: "Link deleted" });
     } catch (error) {
         next(error);
