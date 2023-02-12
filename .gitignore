@@ -2,3 +2,4 @@ node_modules
 prisma/migrations
 config.js
 .env
+.idea
