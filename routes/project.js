@@ -98,6 +98,7 @@ router.post("/", async (req, res, next) => {
                 endingDate: true,
             }
         });
+        await req.triggerRebuildPortfolio();
         res.status(200).json(project);
     } catch (err) {
         next(err);
