@@ -1,3 +1,4 @@
+const Utils = require("../utils");
 const router = require("express").Router();
 const prisma = require("../db").getInstance();
 const axios = require("axios").default;
@@ -36,7 +37,7 @@ router.post("/", async (req, res, next) => {
     
         const social_link = await prisma.socialLink.create({
             data: {
-                link,
+                link: Utils.URLCleanup(link),
                 type: {
                     connect: {
                         id: type_id
@@ -118,7 +119,7 @@ router.put("/:id", async (req, res, next) => {
                 id: parseInt(id)
             },
             data: {
-                link
+                link: Utils.URLCleanup(link)
             },
             select: {
                 id: true,

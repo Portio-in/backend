@@ -1,3 +1,4 @@
+const Utils = require("../utils");
 const router = require("express").Router();
 const prisma = require("../db").getInstance();
 const axios = require("axios").default;
@@ -41,7 +42,7 @@ router.post("/", async (req, res, next) => {
                 title,
                 description,
                 date: date_formatted,
-                referenceLink,
+                referenceLink: Utils.URLCleanup(referenceLink),
                 profile: {
                     connect: {
                         id: req.user.id
@@ -113,7 +114,7 @@ router.put("/:id", async (req, res, next) => {
             data: {
                 title,
                 description,
-                referenceLink,
+                referenceLink: Utils.URLCleanup(referenceLink),
                 date: date_formatted
             },
             select: {

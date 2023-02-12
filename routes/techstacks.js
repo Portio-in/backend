@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
 
 // Update techstacks
 router.put("/", async (req, res) => {
-    const { tech_stacks_id } = req.body;
+    let { tech_stacks_id } = req.body;
     if(tech_stacks_id === null || tech_stacks_id === undefined) tech_stacks_id = [];
     const profile_techstacks = await prisma.profile.update({
         where: {

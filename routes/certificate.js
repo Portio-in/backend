@@ -1,3 +1,4 @@
+const Utils = require("../utils");
 const router = require("express").Router();
 const prisma = require("../db").getInstance();
 const axios = require("axios").default;
@@ -38,8 +39,8 @@ router.post("/", async (req, res, next) => {
         const certificate = await prisma.certificate.create({
             data: {
                 title,
-                link,
-                completedOn,
+                link: Utils.URLCleanup(link),
+                completedOn: completedOn,
                 providedBy: provided_by,
                 profileId: req.user.id
             },
@@ -84,8 +85,8 @@ router.put("/:id", async (req, res, next) => {
             },
             data: {
                 title,
-                link,
-                completedOn,
+                link: Utils.URLCleanup(link),
+                completedOn: completedOn,
                 providedBy: provided_by
             },
             select: {

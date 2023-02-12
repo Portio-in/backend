@@ -116,6 +116,17 @@ class Utils {
     }
     return true;
   }
+
+  /**
+   * @param {String?} url
+   * @returns {String}
+   * @description This function will add https if not have http or https at starting
+   */
+  static URLCleanup(url){
+    if (!url) return "";
+    if(url.startsWith("http://") || url.startsWith("https://")) return url;
+    else return "https://" + url;
+  }
 }
 
 

@@ -1,3 +1,4 @@
+const Utils = require("../utils");
 const router = require("express").Router();
 const prisma = require("../db").getInstance();
 const axios = require("axios").default;
@@ -66,16 +67,16 @@ router.post("/", async (req, res, next) => {
                 techStacks: {
                     connect: tech_stacks_id.map(id => ({ id: id }))
                 },
-                liveLink: live_link,
-                codeLink: code_link,
-                readMoreLink: read_more_link,
+                liveLink: Utils.URLCleanup(live_link),
+                codeLink: Utils.URLCleanup(code_link),
+                readMoreLink: Utils.URLCleanup(read_more_link),
                 startingDate: starting_date_formatted,
                 endingDate: ending_date_formatted,
                 profile: {
                     connect: {
                         id: req.user.id
                     }
-                },
+                }
             },
             select: {
                 id: true,
@@ -179,9 +180,9 @@ router.put("/:id", async (req, res, next) => {
                 techStacks: {
                     connect: tech_stacks_id.map(id => ({ id: id }))
                 },
-                liveLink: live_link,
-                codeLink: code_link,
-                readMoreLink: read_more_link,
+                liveLink: Utils.URLCleanup(live_link),
+                codeLink: Utils.URLCleanup(code_link),
+                readMoreLink: Utils.URLCleanup(read_more_link),
                 startingDate: starting_date_formatted,
                 endingDate: ending_date_formatted,
             },
