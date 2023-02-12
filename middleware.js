@@ -19,7 +19,12 @@ class Middleware {
                     profille: {
                         select: {
                             id: true,
-                            email: true
+                            email: true,
+                            activeTemplate: {
+                                select: {
+                                    code: true
+                                }
+                            }
                         }
                     }
                 }
