@@ -207,6 +207,7 @@ router.put("/:id", async (req, res, next) => {
                 endingDate: true,
             }
         });
+        await req.triggerRebuildPortfolio();
         res.status(200).json(project);
     } catch (err) {
         next(err);
@@ -230,6 +231,7 @@ router.delete("/:id", async (req, res, next) => {
                 id: parseInt(req.params.id)
             }
         });
+        await req.triggerRebuildPortfolio();
         res.status(200).json({ message: "Project deleted" });
     } catch (err) {
         next(err);
