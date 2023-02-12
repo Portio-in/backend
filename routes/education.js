@@ -68,6 +68,7 @@ router.post("/", async (req, res, next) => {
                 endingDate: true,
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json(education);
     } catch (error) {
         next(error);
@@ -148,6 +149,7 @@ router.put("/:id", async (req, res, next) => {
                 endingDate: true,
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json(education);
     } catch (error) {
         next(error);
@@ -171,6 +173,7 @@ router.delete("/:id", async (req, res, next) => {
                 id: parseInt(req.params.id)
             }
         });
+        await req.triggerRebuildPortfolio();
         res.json({ message: "Education record deleted" });
     } catch (error) {
         next(error);
