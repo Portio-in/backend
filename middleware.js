@@ -1,3 +1,5 @@
+const Utils = require("./utils");
+
 const prisma = require("./db").getInstance();
 
 class Middleware {
@@ -31,6 +33,7 @@ class Middleware {
                 }
             })
             req.user = user.profille;
+            req.triggerRebuildPortfolio = async()=>await Utils.triggerTemplateRebuild(user.profille.domain, user.profille.activeTemplate.code);
             next();
         } catch (err) {
             res.status(401).json({
