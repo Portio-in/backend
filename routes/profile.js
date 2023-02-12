@@ -116,7 +116,7 @@ router.put("/", async (req, res, next) => {
                 }
             }
         })
-        
+        await req.triggerRebuildPortfolio();
         res.send(profile);
     } catch (error) {
         next(error);
@@ -171,6 +171,7 @@ router.patch("/domain", async (req, res, next) => {
                 }
             }
         })
+        await req.triggerRebuildPortfolio();
         res.send(profile);
     } catch (error) {
         next(error);
@@ -232,14 +233,8 @@ router.patch("/template", async (req, res, next) => {
             }
         })
 
-        Utils.triggerTemplateRebuild(profile.domain, template.code)
-        .then(() => {
-            res.send(profile);
-        })
-        .catch(error => {
-            next(error);
-        })
-
+        await req.triggerRebuildPortfolio();
+        res.send(profile);
     } catch (error) {
         next(error);
     }
