@@ -233,7 +233,7 @@ router.patch("/template", async (req, res, next) => {
             }
         })
 
-        await req.triggerRebuildPortfolio();
+        await Utils.triggerTemplateRebuild(profile.domain, profile.activeTemplate.code);
         res.send(profile);
     } catch (error) {
         next(error);
