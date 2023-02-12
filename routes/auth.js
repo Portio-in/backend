@@ -173,7 +173,7 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
             }
         })
         // Build portfolio
-        Utils.triggerTemplateRebuild(user.domain, portfolio.code);
+        await Utils.triggerTemplateRebuild(user.domain, portfolio.code);
     }
     // Create Auth Token Record
     const api_token = await prisma.apiToken.create({
