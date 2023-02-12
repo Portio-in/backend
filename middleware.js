@@ -20,6 +20,7 @@ class Middleware {
                         select: {
                             id: true,
                             email: true,
+                            domain: true,
                             activeTemplate: {
                                 select: {
                                     code: true
