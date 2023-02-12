@@ -52,6 +52,7 @@ router.post("/", async (req, res, next) => {
                 providedBy: true
             }
         });
+        await req.triggerRebuildPortfolio();
         res.status(200).json(certificate);
     } catch (error) {
         next(error);
@@ -97,6 +98,7 @@ router.put("/:id", async (req, res, next) => {
                 providedBy: true
             }
         });
+        await req.triggerRebuildPortfolio();
         res.status(200).json(certificate);
     } catch (error) {
         next(error);
@@ -120,6 +122,7 @@ router.delete("/:id", async (req, res, next) => {
                 id: parseInt(req.params.id)
             }
         });
+        await req.triggerRebuildPortfolio();
         res.status(200).json({ message: "Certificate deleted" });
     } catch (error) {
         next(error);
