@@ -1,3 +1,5 @@
+var amqp = require('amqplib/callback_api');
+
 class Utils {
   static handleNullString(str) {
     if (!str || str === null || str === undefined) {
@@ -108,7 +110,7 @@ class Utils {
   static base64ToString(str) {
     return Buffer.from(str, "base64").toString("ascii");
   }
-  
+
   static compareArray(arr1, arr2) {
     if (arr1.length != arr2.length) return false;
     for (var i = 0; i < arr1.length; i++) {
@@ -122,10 +124,46 @@ class Utils {
    * @returns {String}
    * @description This function will add https if not have http or https at starting
    */
-  static URLCleanup(url){
+  static URLCleanup(url) {
     if (!url) return "";
-    if(url.startsWith("http://") || url.startsWith("https://")) return url;
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
     else return "https://" + url;
+  }
+
+  /**
+   * 
+   * @param {String} queue_name 
+   * @param {String} message 
+   * @param {Function} callback 
+   */
+  static publishMessageToQueue(queue_name, message, callback) {
+    amqp.connect(process.env.RABBITMQ_URL, function (err, conn) {
+      if(err) return callback(false);
+      conn.createChannel(function (err, ch) {
+        if(err) return callback(false);
+        ch.assertQueue(queue_name, { durable: true });
+        ch.sendToQueue(queue_name, Buffer.from(message));
+        return callback(true);
+      });
+      setTimeout(function () {
+        conn.close();
+      }, 500);
+    });
+  }
+
+  static triggerTemplateRebuild(domain_name, template_code){
+    let message = {
+      domain_name: domain_name,
+      template_code: template_code
+    };
+    message = JSON.stringify(message);
+    let queue_name = "generatetemplate";
+    const promise = new Promise((resolve, reject) => {
+      Utils.publishMessageToQueue(queue_name, message, function(status){
+        resolve(status);
+      });
+    })
+    return promise;
   }
 }
 

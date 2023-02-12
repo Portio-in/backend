@@ -4,7 +4,8 @@ const config = require("../config");
 const axios = require("axios").default;
 const {google} = require('googleapis');
 const { generateApiKey } = require('generate-api-key');
-const {GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_REDIRECT_URI, GOOGLE_OAUTH_CLIENT_SECRET} = require("../config")
+const {GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_REDIRECT_URI, GOOGLE_OAUTH_CLIENT_SECRET} = require("../config");
+const Utils = require("../utils");
 
 
 // Auth redirection link
@@ -107,7 +108,8 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
             email: email
         },
         select: {
-            id: true
+            id: true,
+            domain: true
         }
     })
     if (existing_user !== null) {
@@ -141,7 +143,8 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
                 domain: random_username+"."+config.PORTFOLIO_BASE_DOMAIN
             },
             select: {
-                id: true
+                id: true,
+                domain: true
             }
         })
         // Set user
@@ -153,7 +156,8 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
                 totalInstalls: "desc"
             },
             select: {
-                id: true
+                id: true,
+                code: true
             }
         })
         await prisma.profile.update({
@@ -168,6 +172,8 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
                 }
             }
         })
+        // Build portfolio
+        Utils.triggerTemplateRebuild(user.domain, portfolio.code);
     }
     // Create Auth Token Record
     const api_token = await prisma.apiToken.create({
