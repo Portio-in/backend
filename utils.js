@@ -159,9 +159,13 @@ class Utils {
     message = JSON.stringify(message);
     let queue_name = "generatetemplate";
     const promise = new Promise((resolve, reject) => {
-      Utils.publishMessageToQueue(queue_name, message, function(status){
-        resolve(status);
-      });
+      try {
+        Utils.publishMessageToQueue(queue_name, message, function(status){
+          resolve(status);
+        });
+      } catch (error) {
+        resolve(false);
+      }
     })
     return promise;
   }
