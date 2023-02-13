@@ -56,7 +56,7 @@ router.post("/", async (req, res, next) => {
         let ending_date_formatted = new Date(ending_date);
         if(ending_date_formatted.toString() === "Invalid Date") ending_date_formatted = null;
 
-        let cover_image_formatted = (cover_image === "" || cover_image === undefined || cover_image === null) ?  "http://www.tgsin.in/images/joomlart/demo/default.jpg" : cover_image;
+        let cover_image_formatted = (cover_image === "" || cover_image === undefined || cover_image === null) ?  "https://portio-content.s3.ap-south-1.amazonaws.com/1676311842971d05369ca192809aba262ee2f5f12a9fe.png" : cover_image;
 
         const project = await prisma.project.create({
             data: {
