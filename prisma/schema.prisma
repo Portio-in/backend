@@ -13,6 +13,7 @@ datasource db {
 enum OauthType {
   github
   google
+  email
 }
 
 // Store all tech stack types
@@ -54,7 +55,7 @@ model Profile {
   avatar           String?             @default("")
   description      String?             @default("")
   tagline          String?             @default("")
-  resumeLink       String?              @default("")
+  resumeLink       String?             @default("")
   techStacks       TechStackType[]
   socialLinks      SocialLink[]
   projects         Project[]
@@ -65,6 +66,22 @@ model Profile {
   apiTokens        apiToken[]
   activeTemplate   PortfolioTemplate?  @relation(fields: [activeTemplateId], references: [id])
   activeTemplateId String?
+}
+
+// Temporary mail verification link
+model MailVerification {
+  id        Int      @id @default(autoincrement())
+  email     String
+  token     String
+  createdAt DateTime @default(now())
+}
+
+model MailAccountRegistration {
+  id        Int      @id @default(autoincrement())
+  email     String
+  name      String
+  token     String
+  createdAt DateTime @default(now())
 }
 
 // API token

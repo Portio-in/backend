@@ -6,6 +6,7 @@ const {google} = require('googleapis');
 const { generateApiKey } = require('generate-api-key');
 const {GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_REDIRECT_URI, GOOGLE_OAUTH_CLIENT_SECRET} = require("../config");
 const Utils = require("../utils");
+const nodemailer = require("nodemailer");
 
 
 // Auth redirection link
@@ -190,5 +191,196 @@ async function loginAndGenerateAPIToken(name, email, picture, access_token, prov
 
     return api_token.key;
 }
+
+// Email registration route
+router.post("/email/init", async (req, res, next) => {
+    try{
+        const { email , name } = req.body;
+        if(email === undefined || email === null || email === "" || name === undefined || name === null || name === "") res.status(200).json({
+            "success": false,
+            "message": "Provide all the details correctly"
+        })
+        // Check if email is already registered
+        const existing_user = await prisma.profile.findFirst({
+            where: {
+                email: email
+            },
+            select: {
+                id: true
+            }
+        })
+        if (existing_user !== null) {
+            res.status(200).json({
+                "success": false,
+                "message": "Email already registered"
+            })
+            return;
+        }
+        const tempRecord = await prisma.mailAccountRegistration.create({
+            data: {
+                email: email,
+                name: name,
+                token: generateApiKey({method: 'bytes', min: 35, max: 60})
+            },
+            select: {
+                id: true,
+                token: true
+            }
+        })
+        // Send email
+        let transporter = nodemailer.createTransport({
+            host: process.env.SMTP_SERVER,
+            port: parseInt(process.env.SMTP_PORT),
+            secure: true,
+            auth: {
+                user: process.env.SMTP_USERNAME,
+                pass: process.env.SMTP_PASSWORD
+            },
+        });
+
+        await transporter.sendMail({
+            from: `"Portio 👻" <${process.env.SMTP_EMAIL}>`, 
+            to: email, 
+            subject: "Portio Account Registration",
+            html: `Hi ! Tap this link to verify and confirm your registration to portio <br/> <a href="${process.env.API_BASE_URL}/auth/email/confirm/${tempRecord.id}?token=${tempRecord.token}">${process.env.API_BASE_URL}/auth/email/confirm/${tempRecord.id}?token=${tempRecord.token}</a>`
+        });
+
+        res.status(200).json({
+            "success": true,
+            "message": "Check your inbox for the verification email"
+        })    
+    } catch (error) {
+        next(error);
+    }
+})
+
+router.get("/email/confirm/:id", async (req, res, next) => {
+    try {
+        const token = req.query["token"];
+        const id = parseInt(req.params["id"]);
+
+        const record = await prisma.mailAccountRegistration.findFirst({
+            where: {
+                id: id,
+                token: token
+            },
+            select: {
+                email: true,
+                name: true
+            }
+        })
+        if(record === null){
+            res.status(200).json({
+                "success": false,
+                "message": "Invalid link"
+            })
+            return;
+        }
+        await prisma.mailAccountRegistration.deleteMany({
+            where: {
+                id: id
+            }
+        })
+        // Login and generate api token
+        const api_token = await loginAndGenerateAPIToken(record.name, record.email, "https://portio-content.s3.ap-south-1.amazonaws.com/167631382200540418cd29fad71aa0a11ddfdcb192c4f.png", "", "email");
+        res.redirect(process.env.AUTH_REDIRECT_URL + "?token=" + api_token);
+    } catch (error) {
+        next(error);
+    }
+})
+
+// Email login route
+router.post("/email/login", async (req, res, next) => {
+    try {
+        const {email} = req.body;
+        if(email === undefined || email === null || email === "") res.status(200).json({
+            "success": false,
+            "message": "Please provide email"
+        })
+        const existing_user = await prisma.profile.findFirst({
+            where: {
+                email: email
+            },
+            select: {
+                name: true,
+                email: true
+            }
+        })
+        if(existing_user === null) {
+            res.status(200).json({
+                "success": false,
+                "message": "Email not registered"
+            })
+            return;
+        }
+        const tempRecord = await prisma.mailVerification.create({
+            data: {
+                email: email,
+                token: generateApiKey({method: 'bytes', min: 35, max: 60})
+            },
+            select: {
+                id: true,
+                token: true
+            }
+        })
+        // Send email
+        let transporter = nodemailer.createTransport({
+            host: process.env.SMTP_SERVER,
+            port: parseInt(process.env.SMTP_PORT),
+            secure: true,
+            auth: {
+                user: process.env.SMTP_USERNAME,
+                pass: process.env.SMTP_PASSWORD
+            }
+        })
+        await transporter.sendMail({
+            from: `"Portio 👻" <${process.env.SMTP_EMAIL}>`, 
+            to: `"${existing_user.name}" <${existing_user.email}>`, 
+            subject: "Portio Login | Magic Link",
+            html: `Hi ${existing_user.name} ! Tap this link to login to portio <br/> <a href="${process.env.API_BASE_URL}/auth/email/login/${tempRecord.id}?token=${tempRecord.token}">${process.env.API_BASE_URL}/auth/email/login/${tempRecord.id}?token=${tempRecord.token}</a>`
+        });
+        res.status(200).json({
+            "success": true,
+            "message": "Check your inbox for the magic link to login"
+        })
+
+    } catch (error) {
+        next(error);
+    }
+})
+
+router.get("/email/login/:id", async (req, res, next) => {
+    try {
+        const token = req.query["token"];
+        const id = parseInt(req.params["id"]);
+
+        const record = await prisma.mailVerification.findFirst({
+            where: {
+                id: id,
+                token: token
+            },
+            select: {
+                email: true
+            }
+        })
+        if(record === null){
+            res.status(200).json({
+                "success": false,
+                "message": "Invalid link"
+            })
+            return;
+        }
+        await prisma.mailVerification.deleteMany({
+            where: {
+                id: id
+            }
+        })
+        // Login and generate api token
+        const api_token = await loginAndGenerateAPIToken("", record.email, "", "", "email");
+        res.redirect(process.env.AUTH_REDIRECT_URL + "?token=" + api_token);
+    } catch (error) {
+        next(error);
+    }
+})
 
 module.exports = router;

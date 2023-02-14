@@ -24,6 +24,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "generate-api-key": "^1.0.2",
-    "googleapis": "^110.0.0"
+    "googleapis": "^110.0.0",
+    "nodemailer": "^6.9.1"
   }
 }
